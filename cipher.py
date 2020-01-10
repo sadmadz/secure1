@@ -2,14 +2,9 @@ import base64
 import binascii
 import hashlib
 import random
-import sys
-
-import Crypto
-from Crypto import Random
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from Crypto import Random
-import ast
 
 from sha import SHA
 
@@ -50,7 +45,6 @@ class AESCipher(object):
     def encrypt(self, raw):
         f = open('aes_key.txt', 'rb')
         key = f.read()
-        print(len(raw))
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(key, AES.MODE_CBC, iv)
         return base64.b64encode(iv + cipher.encrypt(raw.encode()))
@@ -89,7 +83,7 @@ class RSACipher(object):
         f = open('rsa.txt', 'w')
         f.write(binascii.hexlify(self.encrypted).decode("utf-8"))
         f.close()
-        print("Encrypted:", binascii.hexlify(self.encrypted).decode("utf-8"))
+        print("Encrypted:", binascii.hexlify(self.encrypted).decode("utf-8")+"=")
 
     def dec(self):
         f = open('rsa.pem', 'rb')
