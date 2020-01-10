@@ -17,6 +17,8 @@ class SHA:
             result = hashlib.sha512(self.data.encode())
         if int(param) == 1:
             result = hashlib.sha1(self.data.encode())
+        else:
+            result = hashlib.sha256(self.data.encode())
         f = open('sha.txt', 'w')
         f.write(result.hexdigest())
         f.close()

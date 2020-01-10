@@ -46,7 +46,7 @@ class AESCipher(object):
         f = open('aes_key.txt', 'rb')
         key = f.read()
         iv = Random.new().read(AES.block_size)
-        cipher = AES.new(key, AES.MODE_CBC, iv)
+        cipher = AES.new(key, AES.MODE_CFB, iv)
         return base64.b64encode(iv + cipher.encrypt(raw.encode()))
 
     def decrypt(self, enc):
@@ -54,7 +54,7 @@ class AESCipher(object):
         key = f.read()
         enc = base64.b64decode(enc)
         iv = enc[:AES.block_size]
-        cipher = AES.new(key, AES.MODE_CBC, iv)
+        cipher = AES.new(key, AES.MODE_CFB, iv)
         return cipher.decrypt(enc[AES.block_size:]).decode()
 
     def _pad(self, s):
@@ -81,16 +81,16 @@ class RSACipher(object):
         encryptor = PKCS1_OAEP.new(pkey)
         self.encrypted = encryptor.encrypt(data.encode())
         f = open('rsa.txt', 'w')
-        f.write(binascii.hexlify(self.encrypted).decode("utf-8"))
+        f.write(binascii.b2a_base64(self.encrypted).decode("utf-8"))
         f.close()
-        print("Encrypted:", binascii.hexlify(self.encrypted).decode("utf-8")+"=")
+        print("Encrypted:", binascii.b2a_base64(self.encrypted).decode("utf-8"))
 
     def dec(self):
         f = open('rsa.pem', 'rb')
         prkey = RSA.importKey(f.read())
         decryptor = PKCS1_OAEP.new(prkey)
         decrypted = decryptor.decrypt(self.encrypted)
-        print('Decrypted:', decrypted.decode("utf-8"))
+        print('Decrypted:\n'+decrypted.decode("utf-8"))
 
 
 while True:
@@ -108,10 +108,10 @@ while True:
             f.write(enc.decode("utf-8"))
             f.close()
             print("Encrypted:", enc.decode("utf-8"))
-            print("Decrypted:", dec)
+            print("Decrypted:\n"+dec)
         except Exception as e:
             print(e)
-            print(f"{bcolors.FAIL}Wrong query")
+            print(f"{bcolors.FAIL}Wrong input")
     elif query == 'rsa':
 
         try:
@@ -120,13 +120,13 @@ while True:
             test.dec()
         except Exception as e:
             print(e)
-            print(f"{bcolors.FAIL}Wrong query")
+            print(f"{bcolors.FAIL}Wrong input")
     elif query.__contains__('sha'):
         try:
             param = query.split('-')[1]
             SHA(data).encrypt(param)
         except Exception as e:
             print(e)
-            print(f"{bcolors.FAIL}Wrong query")
+            print(f"{bcolors.FAIL}Wrong input")
     else:
-        print(f"{bcolors.FAIL}Wrong query")
+        print(f"{bcolors.FAIL}Wrong input")
